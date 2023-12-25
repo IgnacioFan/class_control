@@ -2,9 +2,9 @@
 
 module Mutations
   class CreateCourse < BaseMutation
-    field :course, Types::CourseType, null: true
+    field :course, Types::Course::CourseType, null: true
 
-    argument :input, Types::CourseInputType, required: true
+    argument :input, Types::Course::CourseInputType, required: true
 
     def resolve(input:)
       course = CourseFactory.new(input.to_h).execute
