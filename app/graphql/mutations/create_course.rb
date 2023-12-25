@@ -1,12 +1,15 @@
+# frozen_string_literal: true
+
 module Mutations
   class CreateCourse < BaseMutation
-    argument :name, String, required: true
-    argument :description, String
+    field :course, Types::CourseType, null: true
 
-    type Types::CourseType
+    argument :input, Types::CourseInputType, required: true
 
-    def resolve(name: nil, description: "")
-      Course.create!(name: name, description: description)
+    def resolve(input:)
+      course = CourseFactory.new(input.to_h).execute
+
+      { course: course }
     rescue ActiveRecord::RecordInvalid => e
       GraphQL::ExecutionError.new("Invalid input: #{e.record.errors.full_messages.join(', ')}")
     end
