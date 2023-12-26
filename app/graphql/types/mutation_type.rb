@@ -7,5 +7,6 @@ module Types
     field :update_course, mutation: Mutations::UpdateCourse
 
     field :reorder_chapter, mutation: Mutations::ReorderChapter
+    field :reorder_unit, mutation: Mutations::ReorderUnit
   end
 end

@@ -10,7 +10,7 @@ RSpec.describe "Mutations::ReorderChapter" do
   let!(:chapter2) { create(:chapter, course: course, sort_key: 2)}
   let!(:chapter3) { create(:chapter, course: course, sort_key: 3)}
 
-  describe "#updateCourse" do
+  describe "#reorderChapter" do
     let(:order) { [chapter3.id, chapter2.id, chapter1.id] }
 
     context "when success" do
