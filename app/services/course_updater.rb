@@ -19,13 +19,13 @@ class CourseUpdater
   def map_course_info
     course.assign_attributes(
       name: course_params[:name],
-      lecturer: course_params[:lecturer],
-      description: course_params[:description]
+      # lecturer: course_params[:lecturer],
+      description: course_params[:description] || ""
     )
     
     chapter_index = 0
 
-    course_params[:chapters].each do |chapter_params|
+    course_params[:chapters]&.each do |chapter_params|
       chapter = course&.chapters&.find { |c| c.id == chapter_params[:id] } 
       if chapter.nil?
         chapter = course.chapters.create(
@@ -43,7 +43,7 @@ class CourseUpdater
       end
       
       unit_index = 0
-      chapter_params[:units].each do |unit_params|
+      chapter_params[:units]&.each do |unit_params|
         unit = chapter&.units.find { |u| u.id == unit_params[:id] } 
         if unit.nil?
           chapter.units.create(
