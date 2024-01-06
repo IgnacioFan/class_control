@@ -6,6 +6,8 @@ services:
     image: postgres:alpine
     env_file:
       - .env
+    ports:
+      - ${POSTGRES_PORT}:5432
     networks:
       - classroom
 
