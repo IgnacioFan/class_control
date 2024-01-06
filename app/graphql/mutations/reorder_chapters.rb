@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Mutations
-  class ReorderChapter < BaseMutation 
+  class ReorderChapters < BaseMutation 
     description "Reorders chapters by courseId"
 
     field :course, Types::Course::CourseType, null: true

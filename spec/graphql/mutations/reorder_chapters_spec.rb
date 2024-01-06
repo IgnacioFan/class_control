@@ -1,8 +1,8 @@
 require "rails_helper"
 
-RSpec.describe "Mutations::ReorderChapter" do
+RSpec.describe "Mutations::ReorderChapters" do
   def perform(**args)
-    Mutations::ReorderChapter.new(object: nil, field: nil, context: {}).resolve(**args)
+    Mutations::ReorderChapters.new(object: nil, field: nil, context: {}).resolve(**args)
   end
 
   let!(:course) { create(:course)}
@@ -10,7 +10,7 @@ RSpec.describe "Mutations::ReorderChapter" do
   let!(:chapter2) { create(:chapter, course: course, sort_key: 2)}
   let!(:chapter3) { create(:chapter, course: course, sort_key: 3)}
 
-  describe "#reorderChapter" do
+  describe "#reorder_chapters" do
     let(:order) { [chapter3.id, chapter2.id, chapter1.id] }
 
     context "when success" do
