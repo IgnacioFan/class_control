@@ -8,7 +8,6 @@ module Types
       field :description, String
       field :content, String, null: false
       field :sort_key, Integer, null: false
-      field :chapter_id, Integer
       field :created_at, GraphQL::Types::ISO8601DateTime
       field :updated_at, GraphQL::Types::ISO8601DateTime
     end
