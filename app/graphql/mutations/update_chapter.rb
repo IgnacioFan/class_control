@@ -2,7 +2,7 @@
 
 module Mutations
   class UpdateChapter < BaseMutation 
-    description "Updates a chapter by chpater ID"
+    description "Updates a chapter by chapter ID"
     
     field :chapter, Types::Chapter::ChapterType, null: true
   
