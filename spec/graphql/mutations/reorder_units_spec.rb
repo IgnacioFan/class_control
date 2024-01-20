@@ -1,8 +1,8 @@
 require "rails_helper"
 
-RSpec.describe "Mutations::ReorderUnit" do
+RSpec.describe "Mutations::ReorderUnits" do
   def perform(**args)
-    Mutations::ReorderUnit.new(object: nil, field: nil, context: {}).resolve(**args)
+    Mutations::ReorderUnits.new(object: nil, field: nil, context: {}).resolve(**args)
   end
 
   let!(:course) { create(:course)}
@@ -11,7 +11,7 @@ RSpec.describe "Mutations::ReorderUnit" do
   let!(:unit2) { create(:unit, chapter: chapter, sort_key: 2)}
   let!(:unit3) { create(:unit, chapter: chapter, sort_key: 3)}
 
-  describe "#reorderUnit" do
+  describe "#reorderUnits" do
     let(:order) { [unit3.id, unit2.id, unit1.id] }
 
     context "when success" do
@@ -20,6 +20,16 @@ RSpec.describe "Mutations::ReorderUnit" do
         expect(unit1.reload.sort_key).to eq(3)
         expect(unit2.reload.sort_key).to eq(2)
         expect(unit3.reload.sort_key).to eq(1)
+      end
+    end
+
+    context "when failures" do
+      context "when chapter ID doesn't exist" do
+        it "returns error message" do
+          data = perform(id: -1, order: order) 
+          expect(data.class).to eq(GraphQL::ExecutionError)
+          expect(data.message).to eq("Couldn't find Chapter with 'id'=-1")
+        end
       end
     end
   end

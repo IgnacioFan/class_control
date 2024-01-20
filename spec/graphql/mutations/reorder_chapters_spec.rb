@@ -21,5 +21,15 @@ RSpec.describe "Mutations::ReorderChapters" do
         expect(chapter3.reload.sort_key).to eq(1)
       end
     end
+
+    context "when failures" do
+      context "when course ID doesn't exist" do
+        it "returns error message" do
+          data = perform(id: -1, order: order) 
+          expect(data.class).to eq(GraphQL::ExecutionError)
+          expect(data.message).to eq("Couldn't find Course with 'id'=-1")
+        end
+      end
+    end
   end
 end

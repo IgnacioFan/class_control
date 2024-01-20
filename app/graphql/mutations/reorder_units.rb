@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 module Mutations
-  class ReorderUnit < BaseMutation 
-    description "Reorders units by chapterId"
+  class ReorderUnits < BaseMutation 
+    description "Reorders units by chapter ID"
 
-    field :chapter, Types::Chapter::ChapterInputType, null: true
+    field :chapter, Types::Chapter::ChapterType, null: true
   
     argument :id, ID, required: true
     argument :order, [Integer], required: true
   
     def resolve(id:, order: )
-      # check if the numb of input values is equal to the num of chapter.units 
-      # update all unit' sort_key 
+      # check if the num of input values is equal to the num of chapter.units 
+      # update all unit's sort_key 
       chapter = Chapter.includes(:units).find(id)
       ActiveRecord::Base.transaction do 
         order.each_with_index do |id, index|

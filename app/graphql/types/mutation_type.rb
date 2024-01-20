@@ -14,6 +14,6 @@ module Types
     field :create_unit, mutation: Mutations::CreateUnit
     field :delete_unit, mutation: Mutations::DeleteUnit
     field :update_unit, mutation: Mutations::UpdateUnit
-    # field :reorder_unit, mutation: Mutations::ReorderUnit
+    field :reorder_units, mutation: Mutations::ReorderUnits
   end
 end
