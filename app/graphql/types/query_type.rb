@@ -23,11 +23,7 @@ module Types
 
     field :courses, resolver: Resolvers::Courses
     field :course, resolver: Resolvers::CourseById
-    
-    # field :course_count, String, null: false,
-    #   description: "Get the number of courses"
-    # def course_count
-    #   Course.count
-    # end
+
+    field :chapter, resolver: Resolvers::ChapterById
   end
 end

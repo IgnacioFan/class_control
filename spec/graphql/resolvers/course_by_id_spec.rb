@@ -9,7 +9,7 @@ RSpec.describe "Resolvers::CourseById" do
   let!(:course) { create(:course, name: "test", description: "") }
 
   context "when success" do      
-    it "return a course" do
+    it "returns a course" do
       get_course = perform(id: course.id.to_s) 
       expect(get_course.class).to eq(Course)
       expect(get_course.name).to eq("test")
