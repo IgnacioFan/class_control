@@ -23,4 +23,24 @@ class Chapter < ApplicationRecord
   has_many :units, dependent: :destroy
 
   validates :name, presence: true
+
+  def self.build_chapter(params)
+    chapter = Chapter.build(
+      name: params[:name],
+      course_id: params[:course_id],
+      sort_key: params[:sort_key],
+    ) 
+    chapter.build_with_units(params[:units]) if params[:units]
+    chapter.save!
+    chapter
+  end
+
+  def build_with_units(units_params) 
+    idx = 1
+    units_params&.each do |params|
+      unit = units.build(params)
+      unit.sort_key = idx
+      idx += 1
+    end 
+  end
 end

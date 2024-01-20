@@ -69,5 +69,13 @@ RSpec.describe "Mutations::CreateChapter" do
         end
       end
     end
+
+    context "when id not found" do
+      it "returns error message" do
+        data = perform(id: -1, input: input) 
+        expect(data.class).to eq(GraphQL::ExecutionError)
+        expect(data.message).to eq("Validation failed: Course must exist")
+      end
+    end
   end
 end

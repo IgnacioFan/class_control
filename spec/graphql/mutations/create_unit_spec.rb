@@ -40,7 +40,7 @@ RSpec.describe "Mutations::CreateUnit" do
       it "returns error message" do
         data = perform(id: -1, input: input) 
         expect(data.class).to eq(GraphQL::ExecutionError)
-        expect(data.message).to eq("Couldn't find Chapter with 'id'=-1")
+        expect(data.message).to eq("Validation failed: Chapter must exist")
       end
     end
   end

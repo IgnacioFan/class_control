@@ -24,4 +24,16 @@ class Unit < ApplicationRecord
 
   validates :name, presence: true
   validates :content, presence: true
+
+  def self.build_unit(params)
+    unit = Unit.build(
+      name: params[:name],
+      description: params[:description],
+      content: params[:content],
+      chapter_id: params[:chapter_id],
+      sort_key: params[:sort_key],
+    ) 
+    unit.save!
+    unit
+  end
 end
