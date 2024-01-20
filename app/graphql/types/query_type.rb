@@ -25,5 +25,7 @@ module Types
     field :course, resolver: Resolvers::CourseById
 
     field :chapter, resolver: Resolvers::ChapterById
+
+    field :unit, resolver: Resolvers::UnitById
   end
 end
