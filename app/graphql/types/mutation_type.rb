@@ -10,9 +10,10 @@ module Types
     field :delete_chapter, mutation: Mutations::DeleteChapter
     field :update_chapter, mutation: Mutations::UpdateChapter
     field :reorder_chapters, mutation: Mutations::ReorderChapters
-    # field :reorder_unit, mutation: Mutations::ReorderUnit
 
     field :create_unit, mutation: Mutations::CreateUnit
+    field :delete_unit, mutation: Mutations::DeleteUnit
     field :update_unit, mutation: Mutations::UpdateUnit
+    # field :reorder_unit, mutation: Mutations::ReorderUnit
   end
 end
