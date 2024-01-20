@@ -11,6 +11,7 @@ module Types
     field :reorder_chapters, mutation: Mutations::ReorderChapters
     # field :reorder_unit, mutation: Mutations::ReorderUnit
 
+    field :create_unit, mutation: Mutations::CreateUnit
     field :update_unit, mutation: Mutations::UpdateUnit
   end
 end
