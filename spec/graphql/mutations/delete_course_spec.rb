@@ -28,7 +28,7 @@ RSpec.describe "Mutations::DeleteCourse" do
     end
 
     context "when id not found" do
-      it "returns deleted course" do
+      it "returns error message" do
         data = perform(id: -1) 
         expect(data.class).to eq(GraphQL::ExecutionError)
         expect(data.message).to eq("Couldn't find Course with 'id'=-1")

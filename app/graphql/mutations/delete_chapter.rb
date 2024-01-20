@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 module Mutations
-  class DeleteCourse < BaseMutation 
-    description "Deletes a course by ID"
+  class DeleteChapter < BaseMutation 
+    description "Deletes a chapter by ID"
     
-    field :course, Types::Course::CourseType, null: true
+    field :chapter, Types::Chapter::ChapterType, null: true
   
     argument :id, ID, required: true
   
     def resolve(id: )
-      course = Course.find(id)
-      if course.destroy
-        { course: course }
+      chapter = Chapter.find(id)
+      if chapter.destroy
+        { chapter: chapter }
       end
     rescue ActiveRecord::RecordNotFound => e 
       GraphQL::ExecutionError.new(e.message)

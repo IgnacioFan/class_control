@@ -7,6 +7,7 @@ module Types
     field :update_course, mutation: Mutations::UpdateCourse
     
     field :create_chapter, mutation: Mutations::CreateChapter
+    field :delete_chapter, mutation: Mutations::DeleteChapter
     field :update_chapter, mutation: Mutations::UpdateChapter
     field :reorder_chapters, mutation: Mutations::ReorderChapters
     # field :reorder_unit, mutation: Mutations::ReorderUnit
