@@ -9,7 +9,6 @@ module Resolvers
     argument :id, ID, required: true
     
     def resolve(id:)
-      # Implement the logic to fetch the course by ID from your database
       Course.find(id)
     rescue ActiveRecord::RecordNotFound => e 
       GraphQL::ExecutionError.new(e.message)

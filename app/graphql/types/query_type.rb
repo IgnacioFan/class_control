@@ -21,7 +21,7 @@ module Types
     # Add root-level fields here.
     # They will be entry points for queries on your schema.
 
-    # field :courses, resolver: Resolvers::AllCourses
+    field :courses, resolver: Resolvers::Courses
     field :course, resolver: Resolvers::CourseById
     
     # field :course_count, String, null: false,

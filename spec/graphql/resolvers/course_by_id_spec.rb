@@ -5,17 +5,15 @@ RSpec.describe "Resolvers::CourseById" do
     Resolvers::CourseById.new(object: nil, field: nil, context: {}).resolve(**args)
   end
 
-  let!(:course) { create(:course, name: "test", description: "")}
-  let!(:chapter) { create(:chapter, course: course)}
-  let!(:units) { create_list(:unit, 2, chapter: chapter)}
+  
+  let!(:course) { create(:course, name: "test", description: "") }
 
   context "when success" do      
     it "return a course" do
-      data = perform(id: course.id.to_s) 
-      update_course = data[:course]
-      expect(course.class).to eq(Course)
-      expect(course.name).to eq("test")
-      expect(course.description).to eq("")
+      get_course = perform(id: course.id.to_s) 
+      expect(get_course.class).to eq(Course)
+      expect(get_course.name).to eq("test")
+      expect(get_course.description).to eq("")
     end
   end
 
