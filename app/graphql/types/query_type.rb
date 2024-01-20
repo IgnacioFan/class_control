@@ -21,11 +21,13 @@ module Types
     # Add root-level fields here.
     # They will be entry points for queries on your schema.
 
-    # TODO: remove me
-    field :test_field, String, null: false,
-      description: "An example field added by the generator"
-    def test_field
-      "Hello World!"
-    end
+    # field :courses, resolver: Resolvers::AllCourses
+    field :course, resolver: Resolvers::CourseById
+    
+    # field :course_count, String, null: false,
+    #   description: "Get the number of courses"
+    # def course_count
+    #   Course.count
+    # end
   end
 end
