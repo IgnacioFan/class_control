@@ -30,8 +30,8 @@ RSpec.describe "Mutations::CreateUnit" do
         expect(new_unit.sort_key).to eq(3)
       end
 
-      it "increases a unit" do
-        expect{ perform(id: course.id, input: input)  }.to \
+      it "increases unit by 1" do
+        expect{ perform(id: chapter.id.to_s, input: input)  }.to \
           change(Unit, :count).from(2).to(3)
       end
     end
