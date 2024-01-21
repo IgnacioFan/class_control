@@ -2,21 +2,20 @@
 #
 # Table name: courses
 #
-#  id          :bigint           not null, primary key
+#  id          :integer          not null, primary key
+#  deleted_at  :datetime
 #  description :text
-#  lecturer    :string           not null
-#  name        :string           not null
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  name        :string(255)      not null
+#  created_at  :datetime
+#  updated_at  :datetime
 #
 require 'rails_helper'
 
 RSpec.describe Course, type: :model do
-  let(:course) { build(:course, name: name, lecturer: lecturer) }
+  let(:course) { build(:course, name: name) }
 
   describe "#validates" do
     let(:name) { "test" }
-    let(:lecturer) { "test" }
 
     subject { course.save }
 
@@ -26,15 +25,6 @@ RSpec.describe Course, type: :model do
 
     context "without name" do
       let(:name) { "" }
-      it { is_expected.to eq(false) }
-    end
-
-    context "with lecturer" do
-      it { is_expected.to eq(true) }
-    end
-
-    context "without lecturer" do
-      let(:lecturer) { "" }
       it { is_expected.to eq(false) }
     end
   end

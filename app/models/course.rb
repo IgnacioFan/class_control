@@ -2,12 +2,12 @@
 #
 # Table name: courses
 #
-#  id          :bigint           not null, primary key
+#  id          :integer          not null, primary key
+#  deleted_at  :datetime
 #  description :text
-#  lecturer    :string           not null
-#  name        :string           not null
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  name        :string(255)      not null
+#  created_at  :datetime
+#  updated_at  :datetime
 #
 class Course < ApplicationRecord
   has_many :chapters, dependent: :destroy
