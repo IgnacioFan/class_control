@@ -2,18 +2,16 @@
 
 module Mutations
   class DeleteChapter < BaseMutation 
-    description "Deletes a chapter by ID"
+    description "Deletes a chapter by id"
     
     field :chapter, Types::Chapter::ChapterType, null: true
   
     argument :id, ID, required: true
   
-    def resolve(id: )
+    def resolve(id:)
       chapter = Chapter.find(id)
-      if chapter.destroy
-        { chapter: chapter }
-      end
-    rescue ActiveRecord::RecordNotFound => e 
+      { chapter: chapter } if chapter.destroy
+    rescue *EXCEPTIONS => e 
       GraphQL::ExecutionError.new(e.message)
     end
   end

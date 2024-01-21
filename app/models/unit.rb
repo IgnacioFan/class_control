@@ -36,4 +36,10 @@ class Unit < ApplicationRecord
     unit.save!
     unit
   end
+
+  def self.update_unit_by(id, params)
+    unit = Unit.find(id)
+    unit.update!(params)
+    unit
+  end
 end

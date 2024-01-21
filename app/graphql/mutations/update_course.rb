@@ -9,9 +9,8 @@ module Mutations
     argument :id, ID, required: true
     argument :input, Types::Course::CourseInputType, required: true
   
-    def resolve(id:, input: )
-      course = Course.find(id)
-      CourseUpdater.new(course, input.to_h).execute
+    def resolve(id:, input:)
+      course = Course.update_course_by(id, input.to_h)
       { course: course }
     rescue ActiveRecord::RecordNotFound => e 
       GraphQL::ExecutionError.new(e.message)

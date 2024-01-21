@@ -10,16 +10,21 @@ module Mutations
     argument :input, Types::Unit::UnitInputType, required: true
 
     def resolve(id:, input:)
-      size = Unit.where(chapter_id: id).count
       unit = Unit.build_unit(
         input.to_h.merge(
           chapter_id: id,
-          sort_key: size + 1
+          sort_key: new_unit_sort_key(id)
         )
       )
       { unit: unit } 
     rescue *EXCEPTIONS => e 
       GraphQL::ExecutionError.new(e.message)
+    end
+
+    private
+
+    def new_unit_sort_key(id)
+      Unit.where(chapter_id: id).count + 1
     end
   end
 end

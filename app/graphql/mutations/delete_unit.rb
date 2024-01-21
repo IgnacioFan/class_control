@@ -2,18 +2,16 @@
 
 module Mutations
   class DeleteUnit < BaseMutation 
-    description "Deletes a unit by ID"
+    description "Deletes a unit by id"
     
     field :unit, Types::Unit::UnitType, null: true
   
     argument :id, ID, required: true
   
-    def resolve(id: )
+    def resolve(id:)
       unit = Unit.find(id)
-      if unit.destroy
-        { unit: unit }
-      end
-    rescue ActiveRecord::RecordNotFound => e 
+      { unit: unit } if unit.destroy
+    rescue *EXCEPTIONS => e 
       GraphQL::ExecutionError.new(e.message)
     end
   end

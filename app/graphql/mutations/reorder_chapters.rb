@@ -2,14 +2,14 @@
 
 module Mutations
   class ReorderChapters < BaseMutation 
-    description "Reorders chapters by courseId"
+    description "Reorders chapters by id"
 
     field :course, Types::Course::CourseType, null: true
   
     argument :id, ID, required: true
     argument :order, [Integer], required: true
   
-    def resolve(id:, order: )
+    def resolve(id:, order:)
       # check if the numb of input values is equal to the num of course.chapters 
       # update all chapters' sort_key 
       course = Course.includes(:chapters).find(id)
@@ -21,7 +21,7 @@ module Mutations
         end
       end
       { course: course }
-    rescue ActiveRecord::RecordNotFound => e 
+    rescue *EXCEPTIONS => e 
       GraphQL::ExecutionError.new(e.message)
     end
   end

@@ -11,8 +11,8 @@ module Mutations
     def resolve(input:)
       course = Course.build_course(input.to_h)
       { course: course } 
-    rescue ActiveRecord::RecordInvalid => e
-      GraphQL::ExecutionError.new("Invalid input: #{e.record.errors.full_messages.join(', ')}")
+    rescue *EXCEPTIONS => e
+      GraphQL::ExecutionError.new(e.message)
     end
   end
 end

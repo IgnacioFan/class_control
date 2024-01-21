@@ -10,16 +10,21 @@ module Mutations
     argument :input, Types::Chapter::ChapterInputType, required: true
 
     def resolve(id:, input:)
-      size = Chapter.where(course_id: id).count
       chapter = Chapter.build_chapter(
         input.to_h.merge(
           course_id: id,
-          sort_key: size + 1
+          sort_key: new_chapter_sort_key(id)
         )
       )
       { chapter: chapter } 
     rescue *EXCEPTIONS => e
       GraphQL::ExecutionError.new(e.message)
+    end
+
+    private
+
+    def new_chapter_sort_key(id)
+      Chapter.where(course_id: id).count + 1
     end
   end
 end

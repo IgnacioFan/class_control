@@ -43,4 +43,28 @@ class Chapter < ApplicationRecord
       idx += 1
     end 
   end
+
+  def self.update_chapter_by(id, params)
+    chapter = Chapter.includes(:units).find(id)
+    chapter.assign_attributes(
+      name: params[:name],
+    )
+    chapter.update_with_units(params[:units]) if params[:units]
+    chapter.save!
+    chapter
+  end
+
+  def update_with_units(units_params)
+    size = units.size
+    units_params&.each do |params|
+      if params[:id].present?
+        unit = units.find { |u| u.id == params[:id].to_i }
+        unit&.assign_attributes(params)
+      else
+        unit = units.build(params)
+        unit.sort_key = size + 1 
+        size += 1
+      end
+    end
+  end
 end
