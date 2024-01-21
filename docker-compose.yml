@@ -2,10 +2,14 @@ version: "3.8"
 
 services:
   postgres:
-    container_name: ${POSTGRES_HOST}
     image: postgres:alpine
+    container_name: ${POSTGRES_NAME}
     env_file:
       - .env
+    volumes:
+      - classroom-db:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT}:5432
     networks:
       - classroom
 
@@ -25,6 +29,8 @@ services:
       - postgres
     networks:
       - classroom
+volumes:
+  classroom-db:
 
 networks:
   classroom:

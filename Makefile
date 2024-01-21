@@ -20,4 +20,4 @@ db.setup:
 	docker exec -it $(APP_NAME) rails db:create && docker exec -it $(APP_NAME) rails db:migrate
 
 db.cli:
-	docker exec -it $(POSTGRES_HOST) psql -U $(POSTGRES_USER)
+	docker exec -it $(POSTGRES_NAME) psql -U $(POSTGRES_USER)
