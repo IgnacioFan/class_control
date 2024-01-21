@@ -2,7 +2,7 @@
 
 module Resolvers
   class UnitById < BaseResolver
-    description "Gets Unit by ID"
+    description "Gets a unit by id"
 
     type Types::Unit::UnitType, null: false
 

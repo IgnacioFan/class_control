@@ -2,7 +2,7 @@
 
 module Resolvers
   class CourseById < BaseResolver
-    description "Gets course by ID"
+    description "Gets a course by id"
 
     type Types::Course::CourseType, null: false
 

@@ -2,7 +2,7 @@
 
 module Resolvers
   class ChapterById < BaseResolver
-    description "Gets chapter by ID"
+    description "Gets a chapter by id"
 
     type Types::Chapter::ChapterType, null: false
 
