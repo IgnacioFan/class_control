@@ -56,10 +56,12 @@ class Chapter < ApplicationRecord
     units_params&.each do |params|
       if params[:id].present?
         unit = units.find { |u| u.id == params[:id].to_i }
-        unit&.assign_attributes(params)
+        unit&.update(params)
       else
-        unit = units.build(params)
-        unit.sort_key = size + 1 
+        units.create!(
+          sort_key: size + 1,
+          **params
+        )
         size += 1
       end
     end

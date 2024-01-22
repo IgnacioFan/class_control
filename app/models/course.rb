@@ -44,24 +44,28 @@ class Course < ApplicationRecord
       name: params[:name],
       description: params[:description] || ""
     )
-    course.update_with_chapters(params[:chapters]) if params[:chapters]
-    course.save!
+    ActiveRecord::Base.transaction do
+      course.update_with_chapters(params[:chapters]) if params[:chapters]
+      course.save!
+    end
     course
   end
 
   def update_with_chapters(chapter_params)
-    size = chapter.size
+    size = chapters.size
     chapter_params&.each do |params|
       chapter = if params[:id].present?
-        obj = chapter.find { |ch| ch.id == params[:id].to_i }
-        obj&.assign_attributes(params)
+        obj = chapters.find { |ch| ch.id == params[:id].to_i }
+        obj&.update(params.except(:units))
+        obj
       else
-        obj = chapters.build(params)
-        obj.sort_key = size + 1 
         size += 1
+        chapters.create!(
+          sort_key: size,
+          **params.except(:units)
+        )
       end
-
-      chapter.build_with_units(params[:units]) if params[:units]
+      chapter.update_with_units(params[:units]) if params[:units]
     end
   end
 end
