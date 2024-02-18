@@ -3,13 +3,12 @@ version: "3.8"
 services:
   postgres:
     image: postgres:alpine
-    container_name: ${POSTGRES_NAME}
     env_file:
       - .env
     volumes:
       - classroom-db:/var/lib/postgresql/data
     ports:
-      - ${POSTGRES_PORT}:5432
+      - 5432:5432
     networks:
       - classroom
 
@@ -27,10 +26,22 @@ services:
       - "3000:3000"
     depends_on:
       - postgres
+      - mongodb
     networks:
       - classroom
+  
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - classroom
+
 volumes:
   classroom-db:
+  mongodb_data:
 
 networks:
   classroom:
