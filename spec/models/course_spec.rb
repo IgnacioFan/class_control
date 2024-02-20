@@ -12,87 +12,81 @@
 require 'rails_helper'
 
 RSpec.describe Course, type: :model do
-  let(:course) { build(:course, name: name) }
+  it { is_expected.to be_mongoid_document }
 
   describe "#validates" do
-    let(:name) { "test" }
-
-    subject { course.save }
-
     context "with name" do
-      it { is_expected.to eq(true) }
+      subject { Course.create(name: "test") }
+
+      it { is_expected.to be_valid }
     end
 
-    context "without name" do
-      let(:name) { "" }
-      it { is_expected.to eq(false) }
+    context "with no name" do
+      subject { Course.create(name: "") }
+
+      it { is_expected.not_to be_valid }
     end
   end
 
+  describe "associations" do
+    it { is_expected.to embed_many(:chapters) }
+  end
+
   describe ".build_course" do
+    subject { Course.build_course(params) }
+
     context "when success" do 
-      let(:params) {
-        {
-          name: "New Course",
-          chapters: chapters
-        }
-      }
-
-      context "params with chapters" do
-        let(:chapters) {
-          [
-            {
-              name: "Chapter A"
-            },
-            {
-              name: "Chapter B"
-            },
-            {
-              name: "Chapter C"
-            }
-          ]
+      context "when creates course and chapters" do
+        let(:params) {
+          {
+            name: "New Course",
+            chapters: [
+              {
+                name: "Chapter A"
+              },
+              {
+                name: "Chapter B"
+              },
+              {
+                name: "Chapter C"
+              }
+            ]
+          }
         }
 
-        it "increases the number of course and chapters" do
-          expect{ Course.build_course(params) }.to \
-            change(Course, :count).from(0).to(1).and \
-            change(Chapter, :count).from(0).to(3).and \
-            change(Unit, :count).by(0)
-        end
+        it_behaves_like "build course"
       end
 
-      context "params with chapters and units" do
-        let(:chapters) {
-          [
-            {
-              name: "Chapter A",
-              units: [
-                {
-                  name: "Unit 1",
-                  description: "",
-                  content: "Hello World"
-                }
-              ]
-            },
-            {
-              name: "Chapter B",
-              units: [
-                {
-                  name: "Unit 2",
-                  description: "",
-                  content: "Hello World"
-                }
-              ]
-            }
-          ]
+      context "when creates course, chapters, and units" do
+        let(:params) {
+          {
+            name: "New Course",
+            chapters: [
+              {
+                name: "Chapter A",
+                units: [
+                  {
+                    name: "Unit 1",
+                    description: "",
+                    content: "Hello World"
+                  }
+                ]
+              },
+              {
+                name: "Chapter B",
+                units: [
+                  {
+                    name: "Unit 2",
+                    description: "",
+                    content: "Hello World"
+                  }
+                ]
+              }
+            ]
+          }
         }
 
-        it "increases the number of course, chapters and units" do
-          expect{ Course.build_course(params) }.to \
-            change(Course, :count).from(0).to(1).and \
-            change(Chapter, :count).from(0).to(2).and \
-            change(Unit, :count).from(0).to(2)
-        end
+        it_behaves_like "build course"
       end
     end
   end
@@ -101,27 +95,23 @@ RSpec.describe Course, type: :model do
     let!(:course) { create(:course, name: "JavaScript")}
     let!(:chapter) { create(:chapter, course: course, name: "Draft", sort_key: 1)}
     let!(:unit) { create(:unit, chapter: chapter, name: "Draft", sort_key: 1)}
+    
+    subject { Course.update_course_by(course.id, params) }
 
     context "when success" do
       context "when updates course only" do
-        let(:params) {
+        let(:params) { 
           {
             name: "Ruby on Rails",
             description: "test"
           }
         }
 
-        it "returns course" do
-          expect(Course.update_course_by(course.id, params)).to \
-            have_attributes(
-              name: "Ruby on Rails",
-              description: "test"
-            )
-        end  
+        it_behaves_like "update course" 
       end
 
       context "when updates course and chapters" do
-        let(:params) {
+        let(:params) { 
           {
             name: "Ruby on Rails",
             description: "test",
@@ -134,26 +124,11 @@ RSpec.describe Course, type: :model do
           }
         }
 
-        it "returns course" do
-          expect(Course.update_course_by(course.id, params)).to \
-            have_attributes(
-              name: "Ruby on Rails",
-              description: "test"
-            )
-        end 
-
-        it "chapter updated" do
-          Course.update_course_by(course.id, params)
-          expect(chapter.reload).to \
-            have_attributes(
-              name: "Chapter A",
-              sort_key: 1
-            )
-        end 
+        it_behaves_like "update course"
       end
 
       context "when updates course and adds new chapters" do
-        let(:params) {
+        let(:params) { 
           {
             name: "Ruby on Rails",
             description: "test",
@@ -165,26 +140,17 @@ RSpec.describe Course, type: :model do
           }
         }
 
-        it "returns course" do
-          expect(Course.update_course_by(course.id, params)).to \
-            have_attributes(
-              name: "Ruby on Rails",
-              description: "test"
-            )
-        end 
+        it_behaves_like "update course" 
 
-        it "new chapter added" do
-          Course.update_course_by(course.id, params)
-          expect(course.chapters.last).to \
-            have_attributes(
-              name: "Chapter B",
-              sort_key: 2
-            )
+        it "adds new chapter" do
+          chapter = subject.chapters.last
+          expect(chapter.changed?).to eq(false)
+          expect(chapter.sort_key).to eq(2)
         end
       end
 
       context "when updates course, chapters, and units" do
-        let(:params) {
+        let(:params) { 
           {
             name: "Ruby on Rails",
             description: "test",
@@ -205,33 +171,7 @@ RSpec.describe Course, type: :model do
           }
         }
 
-        it "returns course" do
-          expect(Course.update_course_by(course.id, params)).to \
-            have_attributes(
-              name: "Ruby on Rails",
-              description: "test"
-            )
-        end 
-
-        it "chapter updated" do
-          Course.update_course_by(course.id, params)
-          expect(chapter.reload).to \
-            have_attributes(
-              name: "Chapter A",
-              sort_key: 1
-            )
-        end
-
-        it "unit updated" do
-          Course.update_course_by(course.id, params)
-          expect(unit.reload).to \
-            have_attributes(
-              name: "Unit A-1",
-              description: "",
-              content: "Hello World",
-              sort_key: 1
-            )
-        end
+        it_behaves_like "update course" 
       end
 
       context "when updates course, chapters, and addes new units" do
@@ -254,33 +194,12 @@ RSpec.describe Course, type: :model do
             ]
           }
         }
+        
+        it_behaves_like "update course"
 
-        it "returns course" do
-          expect(Course.update_course_by(course.id, params)).to \
-            have_attributes(
-              name: "Ruby on Rails",
-              description: "test"
-            )
-        end 
-
-        it "chapter updated" do
-          Course.update_course_by(course.id, params)
-          expect(chapter.reload).to \
-            have_attributes(
-              name: "Chapter A",
-              sort_key: 1
-            )
-        end
-
-        it "new unit added" do
-          Course.update_course_by(course.id, params)
-          expect(chapter.units.last).to \
-            have_attributes(
-              name: "Unit A-2",
-              description: "",
-              content: "Test",
-              sort_key: 2
-            )
+        it "adds new unit" do
+          unit = subject.chapters.first.units.last
+          expect(unit.sort_key).to eq(2)
         end
       end
     end

@@ -14,10 +14,14 @@
 #
 #  chapters_course_id_fkey  (course_id => courses.id)
 #
-class Chapter < ApplicationRecord
-  belongs_to :course
+class Chapter 
+  include Mongoid::Document
 
-  has_many :units, dependent: :destroy
+  field :name, type: String
+  field :sort_key, type: Integer
+
+  embedded_in :course
+  embeds_many :units
 
   validates :name, presence: true
 
@@ -35,8 +39,9 @@ class Chapter < ApplicationRecord
   def build_with_units(units_params) 
     idx = 1
     units_params&.each do |params|
-      unit = units.build(params)
+      unit = units.new(params)
       unit.sort_key = idx
+      unit.save
       idx += 1
     end 
   end
@@ -55,7 +60,7 @@ class Chapter < ApplicationRecord
     size = units.size
     units_params&.each do |params|
       if params[:id].present?
-        unit = units.find { |u| u.id == params[:id].to_i }
+        unit = units.find(params[:id])
         unit&.update(params)
       else
         units.create!(

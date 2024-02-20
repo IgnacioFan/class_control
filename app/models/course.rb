@@ -9,27 +9,30 @@
 #  created_at  :datetime
 #  updated_at  :datetime
 #
-class Course < ApplicationRecord
-  has_many :chapters, dependent: :destroy
+class Course 
+  include Mongoid::Document
+
+  field :name, type: String
+  field :description, type: String
+
+  embeds_many :chapters
 
   validates :name, presence: true
-  # validates :lecturer, presence: true
 
   def self.build_course(params)
-    course = Course.build(
+    course = create(
       name: params[:name],
       description: params[:description] || ""
     )      
     
     course.build_with_chapters(params[:chapters]) if params[:chapters]
-    course.save!
     course
   end
 
   def build_with_chapters(chapter_params) 
     idx = 1
     chapter_params&.each do |params|
-      chapter = chapters.build(
+      chapter = chapters.create(
         name: params[:name],
         sort_key: idx,
       ) 
@@ -39,7 +42,7 @@ class Course < ApplicationRecord
   end
 
   def self.update_course_by(id, params)
-    course = Course.includes(:chapters => :units).find(id)
+    course = Course.find(id)
     course.assign_attributes(
       name: params[:name],
       description: params[:description] || ""
@@ -55,7 +58,7 @@ class Course < ApplicationRecord
     size = chapters.size
     chapter_params&.each do |params|
       chapter = if params[:id].present?
-        obj = chapters.find { |ch| ch.id == params[:id].to_i }
+        obj = chapters.find(params[:id])
         obj&.update(params.except(:units))
         obj
       else

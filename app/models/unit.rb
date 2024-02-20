@@ -16,8 +16,15 @@
 #
 #  units_chapter_id_fkey  (chapter_id => chapters.id)
 #
-class Unit < ApplicationRecord
-  belongs_to :chapter
+class Unit
+  include Mongoid::Document
+
+  field :name, type: String
+  field :content, type: String
+  field :description, type: String
+  field :sort_key, type: Integer
+
+  embedded_in :chapter
 
   validates :name, presence: true
   validates :content, presence: true
