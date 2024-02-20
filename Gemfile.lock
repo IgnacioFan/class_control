@@ -133,6 +133,16 @@ GEM
       concurrent-ruby (>= 1.0.5, < 2.0)
       mongo (>= 2.18.0, < 3.0.0)
       ruby2_keywords (~> 0.0.5)
+    mongoid-compatibility (0.6.0)
+      activesupport
+      mongoid (>= 2.0)
+    mongoid-rspec (4.1.0)
+      activesupport (>= 3.0.0)
+      mongoid (>= 3.1)
+      mongoid-compatibility (>= 0.5.1)
+      rspec-core (~> 3.3)
+      rspec-expectations (~> 3.3)
+      rspec-mocks (~> 3.3)
     mutex_m (0.2.0)
     net-imap (0.4.6)
       date
@@ -245,6 +255,7 @@ DEPENDENCIES
   graphiql-rails
   graphql (~> 2.2)
   mongoid (~> 8.1)
+  mongoid-rspec (~> 4.1)
   pg (~> 1.4)
   puma (>= 5.0)
   rails (~> 7.1.1)
