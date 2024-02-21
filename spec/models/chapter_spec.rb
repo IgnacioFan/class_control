@@ -90,7 +90,7 @@ RSpec.describe Chapter, type: :model do
           }
         }
 
-        it { is_expected.to raise_error(Mongoid::Errors::DocumentNotFound) }
+        it { expect{ subject }.to raise_error(Mongoid::Errors::DocumentNotFound) }
       end
     end
   end
@@ -163,7 +163,7 @@ RSpec.describe Chapter, type: :model do
           }
         }
 
-        it { is_expected.to raise_error(Mongoid::Errors::DocumentNotFound) }
+        it { expect{ subject }.to raise_error(Mongoid::Errors::DocumentNotFound) }
       end
 
       context "when the chapter not found" do
@@ -174,7 +174,7 @@ RSpec.describe Chapter, type: :model do
           }
         }
 
-        it { is_expected.to raise_error(Mongoid::Errors::DocumentNotFound) }
+        it { expect{ subject }.to raise_error(Mongoid::Errors::DocumentNotFound) }
       end
     end
   end

@@ -19,30 +19,28 @@
 require 'rails_helper'
 
 RSpec.describe Unit, type: :model do
-  let(:unit) { build(:unit, name: name, content: content) }
+  it { is_expected.to be_mongoid_document }
 
   describe "#validates" do
-    let(:name) { "test" }
-    let(:content) { "test" }
+    let!(:course) { create(:course) }
+    let!(:chapter) { create(:chapter, course: course) }
 
-    subject { unit.save }
-
-    context "with name" do
-      it { is_expected.to eq(true) }
+    context "when success" do
+      it { expect(chapter.units.create(name: "test", content: "test")).to be_valid }
     end
 
-    context "without name" do
-      let(:name) { "" }
-      it { is_expected.to eq(false) }
-    end
+    context "when failure" do
+      context "without name" do
+        it { expect(chapter.units.create(name: "", content: "test")).not_to be_valid }
+      end
 
-    context "with content" do
-      it { is_expected.to eq(true) }
+      context "without content" do
+        it { expect(chapter.units.create(name: "test", content: "")).not_to be_valid }
+      end
     end
+  end
 
-    context "without content" do
-      let(:content) { "" }
-      it { is_expected.to eq(false) }
-    end
+  describe "associations" do
+    it { is_expected.to be_embedded_in(:chapter) }
   end
 end
