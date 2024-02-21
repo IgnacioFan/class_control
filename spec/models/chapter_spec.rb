@@ -17,108 +17,108 @@
 require 'rails_helper'
 
 RSpec.describe Chapter, type: :model do
-  let(:chapter) { build(:chapter, name: name) }
+  it { is_expected.to be_mongoid_document }
 
   describe "#validates" do
-    subject { chapter.save }
+    let!(:course) { create(:course)}
 
     context "with name" do
-      let(:name) { "test" }
-      it { is_expected.to eq(true) }
+      subject { course.chapters.create(name: "test") }
+
+      it { is_expected.to be_valid }
     end
 
     context "without name" do
-      let(:name) { "" }
-      it { is_expected.to eq(false) }
+      subject { course.chapters.create(name: "") }
+
+      it { is_expected.not_to be_valid }
     end
+  end
+
+  describe "associations" do
+    it { is_expected.to be_embedded_in(:course) }
+    it { is_expected.to embed_many(:units) }
   end
 
   describe ".build_chapter" do
     let!(:course) { create(:course) }
+    let(:course_id) { course.id }
     let!(:chapter) { create(:chapter, course: course) }
 
+    subject { Chapter.build_chapter(course_id, params) }
+
     context "when success" do 
-      let(:params) {
-        {
-          name: "New Chapter",
-          course_id: course.id,
-          sort_key: 2,
-          units: units
+      context "when creates chapters" do
+        let(:params) {
+          {
+            name: "New Chapter"
+          }
         }
-      }
 
-      context "params without units" do
-        let(:units) { nil }
-
-        it "increases the number of course and chapters" do
-          expect{ Chapter.build_chapter(params) }.to \
-            change(Chapter, :count).from(1).to(2).and \
-            change(Unit, :count).by(0)
-        end
+        it_behaves_like "build chapter"
       end
 
-      context "params with units" do
-        let(:units) {
-          [
-            {
-              name: "Unit 1",
-              description: "",
-              content: "Hello World"
-            }
-          ]
+      context "when creates chapters and units" do
+        let(:params) {
+          {
+            name: "New Chapter",
+            units: [
+              {
+                name: "Unit 1",
+                description: "",
+                content: "Hello World"
+              },
+              {
+                name: "Unit 2",
+                description: "",
+                content: "Hello World"
+              }
+            ]
+          }
         }
 
-        it "increases the number of course and chapters" do
-          expect{ Chapter.build_chapter(params) }.to \
-            change(Chapter, :count).from(1).to(2).and \
-            change(Unit, :count).from(0).to(1)
-        end
+        it_behaves_like "build chapter"
       end
     end
 
     context "when failure" do
-      context "params with invalid course_id" do
+      context "when the course not found" do
+        let(:course_id) { "non_existent_id" }
         let(:params) {
           {
-            name: "New Chapter",
-            course_id: course.id + 1,
-            sort_key: 2,
+            name: "New Chapter"
           }
         }
-        it { 
-          expect{ Chapter.build_chapter(params) }.to \
-            raise_error(ActiveRecord::RecordInvalid, \
-            /Validation failed: Course must exist/) 
-        } 
+
+        it { is_expected.to raise_error(Mongoid::Errors::DocumentNotFound) }
       end
     end
   end
 
   describe ".update_chapter_by" do
     let!(:course) { create(:course)}
+    let(:course_id) { course.id }
     let!(:chapter) { create(:chapter, course: course, name: "Draft", sort_key: 1)}
     let!(:unit) { create(:unit, chapter: chapter, name: "Draft", sort_key: 1)}
 
+    subject { Chapter.update_chapter_by(course_id, params) }
+
     context "when success" do
-      context "when updates chapter only" do
+      context "when updates a chapter" do
         let(:params) {
           {
+            id: chapter.id,
             name: "Chapter A",
           }
         }
-
-        it "returns chapter" do
-          expect(Chapter.update_chapter_by(chapter.id, params)).to \
-            have_attributes(
-              name: "Chapter A",
-              sort_key: 1
-            )
-        end  
+        
+        it_behaves_like "update chapter" 
       end
 
-      context "when updates chapter and units" do
+      context "when updates a chapter and units" do
         let(:params) {
           {
+            id: chapter.id,  
             name: "Chapter A",
             units: [
               { 
@@ -131,29 +131,13 @@ RSpec.describe Chapter, type: :model do
           }
         }
 
-        it "returns chapter" do
-          expect(Chapter.update_chapter_by(chapter.id, params)).to \
-            have_attributes(
-              name: "Chapter A",
-              sort_key: 1
-            )
-        end
-
-        it "unit updated" do
-          Chapter.update_chapter_by(chapter.id, params)
-          expect(unit.reload).to \
-            have_attributes(
-              name: "Unit A-1",
-              description: "",
-              content: "Hello World",
-              sort_key: 1
-            )
-        end
+        it_behaves_like "update chapter" 
       end
 
-      context "when updates chapter and addes new units" do
+      context "when updates a chapter and addes a unit" do
         let(:params) {
           {
+            id: chapter.id,
             name: "Chapter A",
             units: [
               { 
@@ -165,24 +149,32 @@ RSpec.describe Chapter, type: :model do
           }
         }
 
-        it "returns chapter" do
-          expect(Chapter.update_chapter_by(chapter.id, params)).to \
-            have_attributes(
-              name: "Chapter A",
-              sort_key: 1
-            )
-        end
+        it_behaves_like "update chapter"
+      end
+    end
 
-        it "new unit added" do
-          Chapter.update_chapter_by(chapter.id, params)
-          expect(chapter.units.last).to \
-            have_attributes(
-              name: "Unit A-2",
-              description: "",
-              content: "Test",
-              sort_key: 2
-            )
-        end
+    context "when failure" do
+      context "when the course not found" do
+        let(:course_id) { "non_existent_id" }
+        let(:params) {
+          {
+            id: chapter.id,  
+            name: "New Chapter"
+          }
+        }
+
+        it { is_expected.to raise_error(Mongoid::Errors::DocumentNotFound) }
+      end
+
+      context "when the chapter not found" do
+        let(:params) {
+          {
+            id: "non_existent_id",  
+            name: "New Chapter"
+          }
+        }
+
+        it { is_expected.to raise_error(Mongoid::Errors::DocumentNotFound) }
       end
     end
   end

@@ -25,10 +25,10 @@ class Chapter
 
   validates :name, presence: true
 
-  def self.build_chapter(params)
-    chapter = Chapter.build(
+  def self.build_chapter(course_id, params)
+    course = Course.find(course_id)
+    chapter = course.chapters.build(
       name: params[:name],
-      course_id: params[:course_id],
       sort_key: params[:sort_key],
     ) 
     chapter.build_with_units(params[:units]) if params[:units]
@@ -46,8 +46,9 @@ class Chapter
     end 
   end
 
-  def self.update_chapter_by(id, params)
-    chapter = Chapter.includes(:units).find(id)
+  def self.update_chapter_by(course_id, params)
+    course = Course.find(course_id)
+    chapter = course.chapters.find(params[:id])
     chapter.assign_attributes(
       name: params[:name],
     )
