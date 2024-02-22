@@ -29,16 +29,15 @@ class Unit
   validates :name, presence: true
   validates :content, presence: true
 
-  def self.build_unit(params)
-    unit = Unit.build(
+  def self.build_unit(course_id, chapter_id, params)
+    course = Course.find(course_id)
+    chapter = course.chapters.find(chapter_id)
+    chapter.units.create!(
       name: params[:name],
       description: params[:description],
       content: params[:content],
-      chapter_id: params[:chapter_id],
-      sort_key: params[:sort_key],
-    ) 
-    unit.save!
-    unit
+      sort_key: chapter.units.size + 1,
+    )
   end
 
   def self.update_unit_by(id, params)

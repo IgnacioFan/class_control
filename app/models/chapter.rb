@@ -29,7 +29,7 @@ class Chapter
     course = Course.find(course_id)
     chapter = course.chapters.build(
       name: params[:name],
-      sort_key: params[:sort_key],
+      sort_key: course.chapters.size + 1,
     ) 
     chapter.build_with_units(params[:units]) if params[:units]
     chapter.save!

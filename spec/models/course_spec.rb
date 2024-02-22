@@ -41,15 +41,9 @@ RSpec.describe Course, type: :model do
           {
             name: "New Course",
             chapters: [
-              {
-                name: "Chapter A"
-              },
-              {
-                name: "Chapter B"
-              },
-              {
-                name: "Chapter C"
-              }
+              { name: "Chapter A" },
+              { name: "Chapter B" },
+              { name: "Chapter C" }
             ]
           }
         }
@@ -133,9 +127,7 @@ RSpec.describe Course, type: :model do
             name: "Ruby on Rails",
             description: "test",
             chapters: [
-              {
-                name: "Chapter B"
-              }
+              { name: "Chapter B" }
             ]
           }
         }

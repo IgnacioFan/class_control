@@ -5,52 +5,36 @@ RSpec.describe "Mutations::CreateCourse" do
     Mutations::CreateCourse.new(object: nil, field: nil, context: {}).resolve(**args)
   end
 
-  let(:input) {
-    {
-      name: "test",
-      chapters: chapters
-    }
-  }
+  subject { perform(input: params)[:course] }
 
-  describe "create a new course" do
-    context "when success" do
-      context "with only course info" do
-        let(:chapters) { nil }
+  context "when success" do
+    context "when creates a course" do
+      let(:params) {
+        {
+          name: "test"
+        }
+      }
+      it_behaves_like "build course"
+    end
 
-        it "return a course" do
-          data = perform(input: input) 
-          course = data[:course]
-          expect(course.class).to eq(Course)
-          expect(course.name).to eq("test")
-          expect(course.description).to eq("")
-        end
-      end
-
-      context "with course and chapters info" do
-        let(:chapters) {
-          [
-            {name: "Chapter 1"},
-            {name: "Chapter 2"},
+    context "when creates a course and chapters" do
+      let(:params) {
+        {
+          name: "test",
+          chapters: [
+            { name: "Chapter 1" },
+            { name: "Chapter 2" },
           ]
         }
+      }
+      it_behaves_like "build course"
+    end
 
-        it "return a course" do
-          data = perform(input: input) 
-          course = data[:course]
-          expect(course.class).to eq(Course)
-          expect(course.name).to eq("test")
-          expect(course.description).to eq("")
-          expect(course.chapters.size).to eq(2)
-
-          chapter1 = course.chapters.first
-          expect(chapter1.class).to eq(Chapter)
-          expect(chapter1.name).to eq("Chapter 1")
-        end
-      end
-
-      context "with course and chapters info" do
-        let(:chapters) {
-          [
+    context "when creates a course, chapters and units" do
+      let(:params) {
+        {
+          name: "test",
+          chapters: [
             {
               name: "Chapter", 
               units: [
@@ -63,25 +47,22 @@ RSpec.describe "Mutations::CreateCourse" do
             }
           ]
         }
+      }
+      it_behaves_like "build course"
+    end
+  end
 
-        it "return a course" do
-          data = perform(input: input) 
-          course = data[:course]
-          expect(course.class).to eq(Course)
-          expect(course.name).to eq("test")
-          expect(course.description).to eq("")
-          expect(course.chapters.size).to eq(1)
-
-          chapter = course.chapters.first
-          expect(chapter.class).to eq(Chapter)
-          expect(chapter.name).to eq("Chapter")
-
-          unit = chapter.units.first
-          expect(unit.class).to eq(Unit)
-          expect(unit.name).to eq("Unit")
-          expect(unit.description).to eq("Test")
-          expect(unit.content).to eq("Mock data")
-        end
+  context "when failure" do
+    context "when name is blank" do
+      let(:params) {
+        {
+          name: ""
+        }
+      }
+      it "returns error message" do
+        data = perform(input: params) 
+        expect(data.class).to eq(GraphQL::ExecutionError)
+        expect(data.message).to eq("The following errors were found: Name can't be blank")
       end
     end
   end

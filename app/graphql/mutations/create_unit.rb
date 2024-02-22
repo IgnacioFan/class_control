@@ -2,29 +2,19 @@
 
 module Mutations
   class CreateUnit < BaseMutation
-    description "Creates a unit by id"
+    description "Creates a unit"
 
     field :unit, Types::Unit::UnitType, null: true
 
-    argument :id, ID, required: true
+    argument :course_id, ID, required: true
+    argument :chapter_id, ID, required: true
     argument :input, Types::Unit::UnitInputType, required: true
 
-    def resolve(id:, input:)
-      unit = Unit.build_unit(
-        input.to_h.merge(
-          chapter_id: id,
-          sort_key: new_unit_sort_key(id)
-        )
-      )
+    def resolve(course_id:, chapter_id:, input:)
+      unit = Unit.build_unit(course_id, chapter_id, input.to_h)
       { unit: unit } 
     rescue *EXCEPTIONS => e 
-      GraphQL::ExecutionError.new(e.message)
-    end
-
-    private
-
-    def new_unit_sort_key(id)
-      Unit.where(chapter_id: id).count + 1
+      GraphQL::ExecutionError.new(e.summary)
     end
   end
 end

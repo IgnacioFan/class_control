@@ -8,39 +8,54 @@ RSpec.describe "Mutations::CreateUnit" do
   let!(:course) { create(:course)}
   let!(:chapter) { create(:chapter, course: course)}
   let!(:units) { create_list(:unit, 2, chapter: chapter)}
-  let(:unit1) { units.first }
 
-  describe "#createUnit" do
-    let(:input) {
-      {
-        name: "New unit name",
-        description: "New unit desc",
-        content: "New unit content"
-      }
+  subject { perform(course_id: course.id, chapter_id: chapter.id, input: params)[:unit] }
+
+  let(:params) {
+    {
+      name: "New unit name",
+      description: "New unit desc",
+      content: "New unit content"
     }
+  }
 
-    context "when success" do
-      it "returns a unit" do
-        data = perform(id: chapter.id.to_s, input: input) 
-        new_unit = data[:unit]
-        expect(new_unit.class).to eq(Unit)
-        expect(new_unit.name).to eq("New unit name")
-        expect(new_unit.description).to eq("New unit desc")
-        expect(new_unit.content).to eq("New unit content")
-        expect(new_unit.sort_key).to eq(3)
-      end
+  context "when success" do
+    it "returns a unit" do
+      new_unit = subject
+      expect(new_unit.class).to eq(Unit)
+      expect(new_unit.name).to eq("New unit name")
+      expect(new_unit.description).to eq("New unit desc")
+      expect(new_unit.content).to eq("New unit content")
+      expect(new_unit.sort_key).to eq(3)
+    end
 
-      it "increases unit by 1" do
-        expect{ perform(id: chapter.id.to_s, input: input)  }.to \
-          change(Unit, :count).from(2).to(3)
+    it "increases the number of units" do
+      subject
+      expect(chapter.reload.units.size).to eq(3)
+    end
+  end
+
+  context "when failure" do
+    context "when chapter id not found" do
+      it "returns error message" do
+        data = perform(course_id: course.id, chapter_id: "non_exsistent_id", input: params)
+        expect(data.class).to eq(GraphQL::ExecutionError)
+        expect(data.message).to include("non_exsistent_id")
       end
     end
 
-    context "when id not found" do
+    context "when name and content are blank" do
+      let(:params) {
+        {
+          name: "",
+          description: "New unit desc",
+          content: ""
+        }
+      }
       it "returns error message" do
-        data = perform(id: -1, input: input) 
+        data = perform(course_id: course.id, chapter_id: chapter.id, input: params)
         expect(data.class).to eq(GraphQL::ExecutionError)
-        expect(data.message).to eq("Validation failed: Chapter must exist")
+        expect(data.message).to eq("The following errors were found: Name can't be blank, Content can't be blank")
       end
     end
   end

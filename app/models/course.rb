@@ -20,19 +20,20 @@ class Course
   validates :name, presence: true
 
   def self.build_course(params)
-    course = create(
+    course = new(
       name: params[:name],
       description: params[:description] || ""
     )      
     
     course.build_with_chapters(params[:chapters]) if params[:chapters]
+    course.save!
     course
   end
 
   def build_with_chapters(chapter_params) 
     idx = 1
     chapter_params&.each do |params|
-      chapter = chapters.create(
+      chapter = chapters.build(
         name: params[:name],
         sort_key: idx,
       ) 

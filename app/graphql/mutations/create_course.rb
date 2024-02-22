@@ -2,7 +2,7 @@
 
 module Mutations
   class CreateCourse < BaseMutation
-    description "Creates a course"
+    description "Creates a course with chapters and units"
 
     field :course, Types::Course::CourseType, null: true
 
@@ -12,7 +12,7 @@ module Mutations
       course = Course.build_course(input.to_h)
       { course: course } 
     rescue *EXCEPTIONS => e
-      GraphQL::ExecutionError.new(e.message)
+      GraphQL::ExecutionError.new(e.summary)
     end
   end
 end
