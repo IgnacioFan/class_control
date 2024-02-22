@@ -2,7 +2,7 @@
 
 module Mutations
   class DeleteCourse < BaseMutation 
-    description "Deletes a course by id"
+    description "Deletes a course"
     
     field :course, Types::Course::CourseType, null: true
   
@@ -10,9 +10,13 @@ module Mutations
   
     def resolve(id:)
       course = Course.find(id)
-      { course: course } if course.destroy
+      if course.destroy
+        { course: course }
+      else
+        GraphQL::ExecutionError.new("failed to delete the course")
+      end 
     rescue *EXCEPTIONS => e 
-      GraphQL::ExecutionError.new(e.message)
+      GraphQL::ExecutionError.new(e.summary)
     end
   end
 end

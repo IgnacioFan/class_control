@@ -5,33 +5,30 @@ RSpec.describe "Mutations::DeleteCourse" do
     Mutations::DeleteCourse.new(object: nil, field: nil, context: {}).resolve(**args)
   end
 
-  let!(:course) { create(:course)}
-  let!(:chapter) { create(:chapter, course: course)}
-  let!(:units) { create_list(:unit, 2, chapter: chapter)}
+  let!(:course) { create(:course) }
 
-  describe "#deleteCourse" do
-    context "when success" do
-      it "returns deleted course" do
-        data = perform(id: course.id) 
-        delete_course = data[:course]
-        expect(delete_course.class).to eq(Course)
-        expect(delete_course.id).to eq(course.id)
-      end
+  subject { perform(id: course.id) }
 
-      # TODO: change the operation to soft-delete
-      it "removes the course, relevant chapters, and units" do
-        expect{ perform(id: course.id) }.to \
-          change(Course, :count).from(1).to(0).and \
-          change(Chapter, :count).from(1).to(0).and \
-          change(Unit, :count).from(2).to(0)
-      end
+  after { Course.collection.drop }
+
+  context "when success" do
+    it "returns course" do
+      delete_course = subject[:course]
+      expect(delete_course.class).to eq(Course)
+      expect(delete_course.id).to eq(course.id)
     end
 
+    it "removes course" do
+      expect{ subject }.to change(Course, :count).from(1).to(0)
+    end
+  end
+
+  context "when failure" do
     context "when id not found" do
       it "returns error message" do
-        data = perform(id: -1) 
+        data = perform(id: "non_exsistent_id") 
         expect(data.class).to eq(GraphQL::ExecutionError)
-        expect(data.message).to eq("Couldn't find Course with 'id'=-1")
+        expect(data.message).to include("non_exsistent_id")
       end
     end
   end
