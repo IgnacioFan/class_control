@@ -2,27 +2,24 @@
 
 module Mutations
   class ReorderUnits < BaseMutation 
-    description "Reorders units by id"
+    description "Reorders units"
 
     field :chapter, Types::Chapter::ChapterType, null: true
   
-    argument :id, ID, required: true
+    argument :course_id, ID, required: true
+    argument :chapter_id, ID, required: true
     argument :order, [Integer], required: true
   
-    def resolve(id:, order:)
-      # check if the num of input values is equal to the num of chapter.units 
-      # update all unit's sort_key 
-      chapter = Chapter.includes(:units).find(id)
-      ActiveRecord::Base.transaction do 
-        order.each_with_index do |id, index|
-          unit = chapter.units.find { |c| c.id == id }
-          unit.sort_key = index + 1
-          unit.save!
-        end
+    def resolve(course_id:, chapter_id:, order:)
+      course = Course.find(course_id)
+      chapter = course.chapters.find(chapter_id)
+      order.each_with_index do |id, index|
+        unit = chapter.units.find(id)
+        unit.sort_key = index + 1
       end
-      { chapter: chapter }
+      { chapter: chapter } if chapter.save!
     rescue *EXCEPTIONS => e 
-      GraphQL::ExecutionError.new(e.message)
+      GraphQL::ExecutionError.new(e.summary)
     end
   end
 end

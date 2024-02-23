@@ -9,26 +9,25 @@ RSpec.describe "Mutations::ReorderChapters" do
   let!(:chapter1) { create(:chapter, course: course, sort_key: 1)}
   let!(:chapter2) { create(:chapter, course: course, sort_key: 2)}
   let!(:chapter3) { create(:chapter, course: course, sort_key: 3)}
+  let(:order) { [chapter3.id, chapter2.id, chapter1.id] }
 
-  describe "#reorder_chapters" do
-    let(:order) { [chapter3.id, chapter2.id, chapter1.id] }
+  after { Course.collection.drop }
 
-    context "when success" do
-      it "updates the sort_key of the chapters" do
-        perform(id: course.id, order: order) 
-        expect(chapter1.reload.sort_key).to eq(3)
-        expect(chapter2.reload.sort_key).to eq(2)
-        expect(chapter3.reload.sort_key).to eq(1)
-      end
+  context "when success" do
+    it "returns course" do
+      perform(course_id: course.id, order: order) 
+      expect(chapter1.reload.sort_key).to eq(3)
+      expect(chapter2.reload.sort_key).to eq(2)
+      expect(chapter3.reload.sort_key).to eq(1)
     end
+  end
 
-    context "when failures" do
-      context "when course ID doesn't exist" do
-        it "returns error message" do
-          data = perform(id: -1, order: order) 
-          expect(data.class).to eq(GraphQL::ExecutionError)
-          expect(data.message).to eq("Couldn't find Course with 'id'=-1")
-        end
+  context "when failures" do
+    context "when id not found" do
+      it "returns error message" do
+        data = perform(course_id: "non_existent_id", order: order) 
+        expect(data.class).to eq(GraphQL::ExecutionError)
+        expect(data.message).to include("non_existent_id")
       end
     end
   end
