@@ -2,7 +2,7 @@
 
 module Mutations
   class UpdateCourse < BaseMutation 
-    description "Updates a course by id"
+    description "Updates a course"
     
     field :course, Types::Course::CourseType, null: true
   
@@ -12,8 +12,8 @@ module Mutations
     def resolve(id:, input:)
       course = Course.update_course_by(id, input.to_h)
       { course: course }
-    rescue ActiveRecord::RecordNotFound => e 
-      GraphQL::ExecutionError.new(e.message)
+    rescue *EXCEPTIONS => e 
+      GraphQL::ExecutionError.new(e.summary)
     end
   end
 end

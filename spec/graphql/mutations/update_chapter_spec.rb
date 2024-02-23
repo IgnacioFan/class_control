@@ -5,63 +5,48 @@ RSpec.describe "Mutations::UpdateChapter" do
     Mutations::UpdateChapter.new(object: nil, field: nil, context: {}).resolve(**args)
   end
 
-  let!(:course) { create(:course)}
-  let!(:chapter) { create(:chapter, course: course)}
-  let!(:units) { create_list(:unit, 2, chapter: chapter)}
-  let(:unit1) { units.first }
-
-  describe "#updateChapter" do
-    let(:input) {
-      {
-        name: "Chapter updated",
-      }
+  let!(:course) { create(:course) }
+  let!(:chapter) { create(:chapter, course: course) }
+  let!(:unit) { create(:unit, chapter: chapter) }
+  let(:params) {
+    {
+      id: chapter.id,
+      name: "Chapter updated"
     }
+  }
 
-    context "when success" do
-      it "returns the updated chapter" do
-        data = perform(id: chapter.id.to_s, input: input) 
-        updated_chapter = data[:chapter]
-        expect(updated_chapter.class).to eq(Chapter)
-        expect(updated_chapter.id).to eq(chapter.id)
-        expect(updated_chapter.name).to eq("Chapter updated")
-      end
+  subject { perform(course_id: course.id, input: params)[:chapter] }
 
-      context "when includes units" do
-        let(:input) {
-          {
-            name: "Chapter updated",
-            units: [
-              {
-                id: unit1.id.to_s,
-                name: "Unit name updated",
-                description: "Unit desc updated",
-                content: "Unit content updated"
-              }
-            ]
-          }
-        }
-
-        it "returns updated chapter and units" do
-          data = perform(id: chapter.id, input: input) 
-          updated_chapter = data[:chapter]
-          expect(updated_chapter.class).to eq(Chapter)
-          expect(updated_chapter.id).to eq(chapter.id)
-          expect(updated_chapter.name).to eq("Chapter updated")
-
-          updated_unit = updated_chapter.units.first
-          expect(updated_unit.name).to eq("Unit name updated")
-          expect(updated_unit.description).to eq("Unit desc updated")
-          expect(updated_unit.content).to eq("Unit content updated")
-        end
-      end
+  context "when success" do
+    context "when updates a chapter" do
+      it_behaves_like "update chapter"
     end
 
-    context "when id not found" do
-      it "returns error message" do
-        data = perform(id: -1, input: input) 
-        expect(data.class).to eq(GraphQL::ExecutionError)
-        expect(data.message).to eq("Couldn't find Chapter with 'id'=-1")
-      end
+    context "when updates a chapter with units" do
+      let(:params) {
+        {
+          id: chapter.id,
+          name: "Chapter updated",
+          units: [
+            {
+              id: unit.id,
+              name: "Unit name updated",
+              description: "Unit desc updated",
+              content: "Unit content updated"
+            }
+          ]
+        }
+      }
+
+      it_behaves_like "update chapter"
+    end
+  end
+
+  context "when id not found" do
+    it "returns error message" do
+      data = perform(course_id: "non_existent_id", input: params)
+      expect(data.class).to eq(GraphQL::ExecutionError)
+      expect(data.message).to include("non_existent_id")
     end
   end
 end

@@ -40,8 +40,10 @@ class Unit
     )
   end
 
-  def self.update_unit_by(id, params)
-    unit = Unit.find(id)
+  def self.update_unit_by(course_id, chapter_id, params)
+    course = Course.find(course_id)
+    chapter = course.chapters.find(chapter_id)
+    unit = chapter.units.find(params[:id])
     unit.update!(params)
     unit
   end
