@@ -5,11 +5,14 @@ RSpec.describe "Resolvers::ChapterById" do
     Resolvers::ChapterById.new(object: nil, field: nil, context: {}).resolve(**args)
   end
 
-  let!(:chapter) { create(:chapter, name: "test") }
+  let!(:course) { create(:course) }
+  let!(:chapter) { create(:chapter, course: course, name: "test") }
+
+  after { Course.collection.drop }
 
   context "when success" do      
     it "returns a chapter" do
-      get_chapter = perform(id: chapter.id.to_s) 
+      get_chapter = perform(course_id: course.id, chapter_id: chapter.id) 
       expect(get_chapter.class).to eq(Chapter)
       expect(get_chapter.name).to eq("test")
     end
@@ -18,9 +21,9 @@ RSpec.describe "Resolvers::ChapterById" do
   context "when failure" do
     context "when id not found" do
       it "returns error message" do
-        data = perform(id: -1) 
+        data = perform(course_id: course.id, chapter_id: "non_existent_id") 
         expect(data.class).to eq(GraphQL::ExecutionError)
-        expect(data.message).to eq("Couldn't find Chapter with 'id'=-1")
+        expect(data.message).to include("non_existent_id")
       end
     end
   end

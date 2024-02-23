@@ -2,16 +2,18 @@
 
 module Resolvers
   class ChapterById < BaseResolver
-    description "Gets a chapter by id"
+    description "Gets a chapter"
 
     type Types::Chapter::ChapterType, null: false
 
-    argument :id, ID, required: true
+    argument :course_id, ID, required: true
+    argument :chapter_id, ID, required: true
     
-    def resolve(id:)
-      Chapter.find(id)
-    rescue ActiveRecord::RecordNotFound => e 
-      GraphQL::ExecutionError.new(e.message)
+    def resolve(course_id:, chapter_id:)
+      course = Course.find(course_id)
+      course.chapters.find(chapter_id)
+    rescue *EXCEPTIONS => e 
+      GraphQL::ExecutionError.new(e.summary)
     end
   end
 end

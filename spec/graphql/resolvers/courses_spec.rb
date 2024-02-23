@@ -5,12 +5,13 @@ RSpec.describe "Resolvers::Courses" do
     Resolvers::Courses.new(object: nil, field: nil, context: {}).resolve(**args)
   end
 
-  let!(:courses) { create_list(:course, 3)}
+  let!(:courses) { create_list(:course, 3) }
+
+  after { Course.collection.drop }
 
   context "when success" do
     it "returns courses" do
-      courses = perform 
-      expect(courses.size).to eq(3)
+      expect(perform.size).to eq(3)
     end
   end
 end

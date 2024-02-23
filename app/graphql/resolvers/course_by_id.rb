@@ -2,7 +2,7 @@
 
 module Resolvers
   class CourseById < BaseResolver
-    description "Gets a course by id"
+    description "Gets a course"
 
     type Types::Course::CourseType, null: false
 
@@ -10,8 +10,8 @@ module Resolvers
     
     def resolve(id:)
       Course.find(id)
-    rescue ActiveRecord::RecordNotFound => e 
-      GraphQL::ExecutionError.new(e.message)
+    rescue *EXCEPTIONS => e 
+      GraphQL::ExecutionError.new(e.summary)
     end
   end
 end
