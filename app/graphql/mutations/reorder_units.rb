@@ -8,7 +8,7 @@ module Mutations
   
     argument :course_id, ID, required: true
     argument :chapter_id, ID, required: true
-    argument :order, [Integer], required: true
+    argument :order, [ID], required: true
   
     def resolve(course_id:, chapter_id:, order:)
       course = Course.find(course_id)
