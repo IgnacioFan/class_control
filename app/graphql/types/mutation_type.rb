@@ -15,5 +15,7 @@ module Types
     field :delete_unit, mutation: Mutations::DeleteUnit
     field :update_unit, mutation: Mutations::UpdateUnit
     field :reorder_units, mutation: Mutations::ReorderUnits
+
+    field :create_user, mutation: Mutations::CreateUser
   end
 end
