@@ -17,5 +17,6 @@ module Types
     field :reorder_units, mutation: Mutations::ReorderUnits
 
     field :create_user, mutation: Mutations::CreateUser
+    field :signin_user, mutation: Mutations::SignInUser
   end
 end
