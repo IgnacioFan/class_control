@@ -1,8 +1,9 @@
 version: "3.8"
 
 services:
-  postgres:
+  postgresdb:
     image: postgres:alpine
+    container_name: ${POSTGRES_CNAME}
     env_file:
       - .env
     volumes:
@@ -16,7 +17,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: ${APP_NAME}
+    container_name: ${APP_CNAME}
     command: bash -c "rm -f tmp/pids/server.pid && rails s -b '0.0.0.0'"
     env_file:
       - .env
@@ -25,7 +26,7 @@ services:
     ports:
       - 3000:3000
     depends_on:
-      - postgres
+      - postgresdb
       - mongodb
     networks:
       - classroom
