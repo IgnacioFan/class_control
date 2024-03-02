@@ -178,7 +178,7 @@ test:
     default:
       database: classroom_test
       hosts:
-        - mongodb:27017
+        - <%= ENV.fetch("MONGODB_HOST") %>:27017
       options:
         read:
           mode: :primary
