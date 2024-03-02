@@ -34,7 +34,7 @@ jobs:
       POSTGRES_PASSWORD: test
       POSTGRES_DB: classroom_test
       POSTGRES_HOST: localhost
-      MONGODB_URI: mongodb://localhost:27017/classroom_test
+      MONGODB_URI: mongodb://mongodb:27017/classroom_test
 
     steps:     
       - name: Checkout code
