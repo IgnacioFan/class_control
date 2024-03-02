@@ -9,7 +9,7 @@ module Mutations
     argument :input, Types::Course::CourseInputType, required: true
 
     def resolve(input:)
-      course = Course.build_course(input.to_h)
+      course = Course.build_course(context[:current_user], input.to_h)
       { course: course } 
     rescue *EXCEPTIONS => e
       GraphQL::ExecutionError.new(e.summary)

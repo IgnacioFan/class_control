@@ -14,16 +14,22 @@ class Course
 
   field :name, type: String
   field :description, type: String
+  field :author_id, type: Integer
 
   embeds_many :chapters
 
   validates :name, presence: true
 
-  def self.build_course(params)
+  def author
+    User.find(self.author_id)
+  end
+
+  def self.build_course(current_user, params)
     course = new(
+      author_id: current_user.id,
       name: params[:name],
       description: params[:description] || ""
-    )      
+    )  
     
     course.build_with_chapters(params[:chapters]) if params[:chapters]
     course.save!

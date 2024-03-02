@@ -13,7 +13,10 @@ module Mutations
       user = User.find_by(email: credentials[:email])
       return GraphQL::ExecutionError.new("invalid email/password") unless user && user.authenticate(credentials[:password])
 
-      { user: user, token: gen_token(user) }
+      token = gen_token(user)
+      context[:session][:token] = token
+
+      { user: user, token: token }
     rescue *EXCEPTIONS => e 
       GraphQL::ExecutionError.new(e.message)
     end

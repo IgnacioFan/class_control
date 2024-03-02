@@ -2,9 +2,9 @@ require "rails_helper"
 
 RSpec.describe "Mutations::SignInUser" do
   def perform(**args)
-    Mutations::SignInUser.new(object: nil, field: nil, context: {}).resolve(**args)
+    Mutations::SignInUser.new(object: nil, field: nil, context: { session: {} }).resolve(**args)
   end
-  
+
   let!(:user) { create(:user, name: "Test User", email: "email@example.com", password: "1234") }
 
   context "when success" do

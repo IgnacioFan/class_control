@@ -14,4 +14,8 @@ class User < ApplicationRecord
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
+
+  def courses 
+    Course.where(author_id: id)
+  end
 end

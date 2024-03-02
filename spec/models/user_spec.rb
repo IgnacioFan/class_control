@@ -39,4 +39,13 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "associations" do
+    context "courses" do
+      let!(:current_user) { create(:user) }
+      let!(:courses) { create_list(:course, 2, author_id: current_user.id) }
+      
+      it { expect(current_user.courses).to eq(courses) }
+    end
+  end
 end

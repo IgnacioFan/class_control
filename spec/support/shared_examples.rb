@@ -5,6 +5,7 @@ RSpec.shared_examples "build course" do
   it "returns course" do
     course = subject
     expect(course.name).to eq(params[:name])
+    expect(course.author).to eq(current_user)
     next unless params[:chapters].present?
 
     expect(course.chapters.count).to eq(params[:chapters].count) 

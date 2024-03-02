@@ -30,10 +30,19 @@ RSpec.describe Course, type: :model do
 
   describe "associations" do
     it { is_expected.to embed_many(:chapters) }
+
+    context "author" do
+      let!(:current_user) { create(:user) }
+      let!(:course) { create(:course, author_id: current_user.id) }
+      
+      it { expect(course.author).to eq(current_user) }
+    end
   end
 
   describe ".build_course" do
-    subject { Course.build_course(params) }
+    let!(:current_user) { create(:user) }
+
+    subject { Course.build_course(current_user, params) }
 
     context "when success" do 
       context "when creates course and chapters" do

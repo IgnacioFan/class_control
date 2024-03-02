@@ -2,8 +2,10 @@ require "rails_helper"
 
 RSpec.describe "Mutations::CreateCourse" do
   def perform(**args)
-    Mutations::CreateCourse.new(object: nil, field: nil, context: {}).resolve(**args)
+    Mutations::CreateCourse.new(object: nil, field: nil, context: { current_user: current_user }).resolve(**args)
   end
+
+  let!(:current_user) { create(:user) }
 
   subject { perform(input: params)[:course] }
 
