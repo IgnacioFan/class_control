@@ -4,10 +4,11 @@ Class Control is a course management service, a GraphQL server designed to effic
 
 Functional Requirements:
 - **Read Operations**: Retrieve detailed information about courses, chapters, and units.
-- **Creation Operations**: Create new courses, including chapters, and populate chapters with multiple units.
+- **Creation Operations**: Create a new course, including chapters, and populate chapters with multiple units.
 - **Update Operations**: Modify course, chapter, and unit details individually.
 - **Deletion Operations**: Delete courses, chapters, and units individually.
 - **Reordering**: Reorder chapters within a course and units within a chapter.
+- **Authentication**: Sign-up, sign-in and sign-off a user.
 
 Non-functional Requirements:
 - **Scalability**: The system is built to handle growing data volumes and increasing user loads.

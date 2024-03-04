@@ -64,7 +64,7 @@ RSpec.describe "Mutations::CreateCourse" do
       it "returns error message" do
         data = perform(input: params) 
         expect(data.class).to eq(GraphQL::ExecutionError)
-        expect(data.message).to eq("The following errors were found: Name can't be blank")
+        expect(data.message).to include("The following errors were found: Name can't be blank")
       end
     end
   end

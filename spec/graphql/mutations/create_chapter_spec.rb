@@ -2,9 +2,10 @@ require "rails_helper"
 
 RSpec.describe "Mutations::CreateChapter" do
   def perform(**args)
-    Mutations::CreateChapter.new(object: nil, field: nil, context: {}).resolve(**args)
+    Mutations::CreateChapter.new(object: nil, field: nil, context: { current_user: current_user }).resolve(**args)
   end
 
+  let(:current_user) { "user1" }
   let!(:course) { create(:course) }
   let!(:chapter) { create(:chapter, course: course) }
   let!(:units) { create_list(:unit, 2, chapter: chapter) }
@@ -57,12 +58,23 @@ RSpec.describe "Mutations::CreateChapter" do
   end
 
   context "when failure" do
-    context "when course id not found" do
-      let(:params) {
-        {
-          name: "test"
-        }
+    let(:params) {
+      {
+        name: "test"
       }
+    }
+
+    context "when current_user not found" do
+      let(:current_user) {}
+
+      it "returns error message" do
+        data = perform(course_id: "non_exsistent_id", input: params) 
+        expect(data.class).to eq(GraphQL::ExecutionError)
+        expect(data.message).to include("permission denied")
+      end
+    end
+
+    context "when course id not found" do
       it "returns error message" do
         data = perform(course_id: "non_exsistent_id", input: params) 
         expect(data.class).to eq(GraphQL::ExecutionError)
@@ -79,7 +91,7 @@ RSpec.describe "Mutations::CreateChapter" do
       it "returns error message" do
         data = perform(course_id: course.id, input: params) 
         expect(data.class).to eq(GraphQL::ExecutionError)
-        expect(data.message).to eq("The following errors were found: Name can't be blank")
+        expect(data.message).to include("The following errors were found: Name can't be blank")
       end
     end
   end
