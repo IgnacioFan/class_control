@@ -11,6 +11,8 @@ module Mutations
     argument :unit_id, ID, required: true
   
     def resolve(course_id:, chapter_id:, unit_id:)
+      permission_denied!
+      
       course = Course.find(course_id)
       chapter = course.chapters.find(chapter_id)
       unit = chapter.units.find(unit_id)
@@ -20,7 +22,7 @@ module Mutations
         GraphQL::ExecutionError.new("failed to delete the unit")
       end 
     rescue *EXCEPTIONS => e 
-      GraphQL::ExecutionError.new(e.summary)
+      GraphQL::ExecutionError.new(e)
     end
   end
 end

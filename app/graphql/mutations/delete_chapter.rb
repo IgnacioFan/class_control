@@ -2,7 +2,7 @@
 
 module Mutations
   class DeleteChapter < BaseMutation 
-    description "Deletes a chapter"
+    description "Deletes a chapter, including units"
     
     field :chapter, Types::Chapter::ChapterType, null: true
   
@@ -10,6 +10,8 @@ module Mutations
     argument :chapter_id, ID, required: true
   
     def resolve(course_id:, chapter_id:)
+      permission_denied!
+      
       course = Course.find(course_id)
       chapter = course.chapters.find(chapter_id)
       if chapter.destroy
@@ -18,7 +20,7 @@ module Mutations
         GraphQL::ExecutionError.new("failed to delete the chapter")
       end 
     rescue *EXCEPTIONS => e 
-      GraphQL::ExecutionError.new(e.summary)
+      GraphQL::ExecutionError.new(e)
     end
   end
 end
