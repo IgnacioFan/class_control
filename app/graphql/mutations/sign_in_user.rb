@@ -14,7 +14,6 @@ module Mutations
       return GraphQL::ExecutionError.new("invalid email/password") unless user && user.authenticate(credentials[:password])
 
       token = gen_token(user)
-      context[:session][:token] = token
 
       { user: user, token: token }
     rescue *EXCEPTIONS => e 
@@ -23,10 +22,8 @@ module Mutations
 
     private
 
-    # TODO: refactor the token method to JWT
     def gen_token(user)
-      crypt = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base.byteslice(0..31))
-      crypt.encrypt_and_sign("user-id:#{ user.id }")
+      JsonWebToken.encode({ user_id: user.id })
     end
   end
 end

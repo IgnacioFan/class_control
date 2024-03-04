@@ -12,7 +12,7 @@ class GraphqlController < ApplicationController
     operation_name = params[:operationName]
     context = {
       # Query context goes here, for example:
-      # current_user: current_user,
+      current_user: current_user,
     }
     result = ClassroomSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
@@ -51,14 +51,11 @@ class GraphqlController < ApplicationController
   end
 
   def current_user
-  #   if we want to change the sign-in strategy, this is the place to do it
-  #   return unless session[:token]
+    token = request.headers['Authorization'].to_s.split(' ').last
+    return unless token
 
-  #   crypt = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base.byteslice(0..31))
-  #   token = crypt.decrypt_and_verify(session[:token])
-  #   user_id = token.gsub('user-id:', '').to_i
-  #   User.find(user_id)
-  # rescue ActiveSupport::MessageVerifier::InvalidSignature
-  #   nil
+    payload = JsonWebToken.decode(token)
+    # TODO: cache the user id
+    User.find(payload["user_id"])
   end
 end

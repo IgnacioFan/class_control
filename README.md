@@ -48,9 +48,14 @@ Non-functional Requirements:
    POSTGRES_USER=test
    POSTGRES_PASSWORD=test
    POSTGRES_HOST=postgres
+   
    # rails app
-   APP_NAME=?
+   APP_CNAME=classroom
+   
+   # MongoDB 
+   MONGODB_HOST=mongodb
    ```
 4. Execute `make app.build` to boot up the Rails server and Postgres:
 5. Execute `make db.setup` to create development, test databases, and run db migration
 6. Open the browser and go to http://localhost:3000.
+7. Run all tests `make test` or run a specific test `make test path=spec/{spec_file_path}`
