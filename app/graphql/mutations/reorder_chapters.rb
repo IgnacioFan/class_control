@@ -10,6 +10,8 @@ module Mutations
     argument :order, [ID], required: true
   
     def resolve(course_id:, order:)
+      permission_denied!
+      
       course = Course.find(course_id)
       order.each_with_index do |id, index|
         chapter = course.chapters.find(id)
@@ -17,7 +19,7 @@ module Mutations
       end
       { course: course } if course.save!
     rescue *EXCEPTIONS => e 
-      GraphQL::ExecutionError.new(e.summary)
+      GraphQL::ExecutionError.new(e)
     end
   end
 end
