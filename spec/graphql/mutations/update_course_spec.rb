@@ -2,9 +2,10 @@ require "rails_helper"
 
 RSpec.describe "Mutations::UpdateCourse" do
   def perform(**args)
-    Mutations::UpdateCourse.new(object: nil, field: nil, context: {}).resolve(**args)
+    Mutations::UpdateCourse.new(object: nil, field: nil, context: { current_user: current_user }).resolve(**args)
   end
 
+  let(:current_user) { "user1" }
   let!(:course) { create(:course) }
   let!(:chapter) { create(:chapter, course: course) }
   let!(:unit) { create(:unit, chapter: chapter) }
@@ -64,6 +65,15 @@ RSpec.describe "Mutations::UpdateCourse" do
   end
 
   context "when failure" do
+    context "when current_user not found" do
+      let(:current_user) {}
+      it "returns error message" do
+        data = perform(id: "", input: params) 
+        expect(data.class).to eq(GraphQL::ExecutionError)
+        expect(data.message).to include("permission denied")
+      end
+    end
+
     context "when id not found" do
       it "returns error message" do
         data = perform(id: "non_existent_id", input: params) 

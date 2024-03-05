@@ -11,10 +11,12 @@ module Mutations
     argument :input, Types::Unit::UnitInputType, required: true
   
     def resolve(course_id:, chapter_id:, input:)
+      permission_denied!
+
       unit = Unit.update_unit_by(course_id, chapter_id, input.to_h)
       { unit: unit }
     rescue *EXCEPTIONS => e 
-      GraphQL::ExecutionError.new(e.summary)
+      GraphQL::ExecutionError.new(e)
     end
   end
 end
