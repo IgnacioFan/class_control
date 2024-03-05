@@ -9,9 +9,11 @@ module Resolvers
     argument :id, ID, required: true
     
     def resolve(id:)
+      permission_denied!
+
       Course.find(id)
     rescue *EXCEPTIONS => e 
-      GraphQL::ExecutionError.new(e.summary)
+      GraphQL::ExecutionError.new(e)
     end
   end
 end

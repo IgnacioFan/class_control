@@ -2,9 +2,10 @@ require "rails_helper"
 
 RSpec.describe "Resolvers::CourseById" do
   def perform(**args)
-    Resolvers::CourseById.new(object: nil, field: nil, context: {}).resolve(**args)
+    Resolvers::CourseById.new(object: nil, field: nil, context: { current_user: current_user }).resolve(**args)
   end
   
+  let(:current_user) { "user1" }
   let!(:course) { create(:course, name: "test", description: "") }
 
   after { Course.collection.drop }
@@ -19,6 +20,15 @@ RSpec.describe "Resolvers::CourseById" do
   end
 
   context "when failure" do
+    context "when current_user not found" do
+      let(:current_user) {}
+      it "returns error message" do
+        data = perform(id: "") 
+        expect(data.class).to eq(GraphQL::ExecutionError)
+        expect(data.message).to include("permission denied")
+      end
+    end
+
     context "when id not found" do
       it "returns error message" do
         data = perform(id: "non_existent_id") 
